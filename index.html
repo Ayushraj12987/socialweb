@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Booster Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f9; margin: 0; padding: 15px; color: #333; }
+        .header { background: #1c2b5e; color: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        label { font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px; color: #555; }
+        select, input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; }
+        .info-box { background: #eef2ff; border-left: 4px solid #1c2b5e; padding: 10px; margin-bottom: 15px; font-size: 13px; }
+        .total-box { display: flex; justify-content: space-between; font-weight: bold; font-size: 18px; margin: 15px 0; border-top: 1px solid #eee; padding-top: 10px; }
+        .order-btn { background: #1c2b5e; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div><strong>🚀 Social Booster</strong><br><small>Premium Quality • Instant</small></div>
+        <div>Balance: <span id="user-balance">₹0.00</span></div>
+    </div>
+
+    <div class="card">
+        <label>Category (Click to change 👇)</label>
+        <select id="category" onchange="updateServices()">
+            <option value="ig_followers">Instagram Followers [Guaranteed ♻️]</option>
+            <option value="ig_likes">Instagram Likes [High Quality]</option>
+        </select>
+
+        <label>Service (Click to change 👇)</label>
+        <select id="service" onchange="updateInfo()">
+            </select>
+
+        <div class="info-box" id="service-info">
+            😊 Start: 0-1 hour<br>⚡ Speed: 50K/Day<br>❤️ Quality: Real<br>♻️ Refill: 30 Days
+        </div>
+
+        <label>Link</label>
+        <input type="text" id="link" placeholder="https://instagram.com/...">
+
+        <label>Quantity</label>
+        <input type="number" id="quantity" placeholder="100" oninput="calculateTotal()">
+
+        <div class="total-box">
+            <span>Total:</span>
+            <span id="total-price">₹0.00</span>
+        </div>
+
+        <button class="order-btn" onclick="placeOrder()">Place Order</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Full screen open hoga
+
+        const services = {
+            ig_followers: [
+                {id: 101, name: "Instagram Followers [R30] - ₹20", price: 20},
+                {id: 102, name: "Instagram Followers [LifeTime] - ₹50", price: 50}
+            ],
+            ig_likes: [
+                {id: 201, name: "Instagram Real Likes - ₹5", price: 5}
+            ]
+        };
+
+        function updateServices() {
+            const cat = document.getElementById('category').value;
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = services[cat].map(s => <option value="${s.id}" data-price="${s.price}">${s.name}</option>).join('');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const qty = document.getElementById('quantity').value || 0;
+            const pricePerK = document.getElementById('service').selectedOptions[0].getAttribute('data-price');
+            const total = (qty / 1000) * pricePerK;
+            document.getElementById('total-price').innerText = "₹" + total.toFixed(2);
+        }
+
+        function placeOrder() {
+            const orderData = {
+                service_id: document.getElementById('service').value,
+                link: document.getElementById
