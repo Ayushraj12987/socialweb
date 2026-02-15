@@ -2,240 +2,137 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Social Booster Hub - Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Booster Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
-            min-height: 100vh;
-        }
-
-        /* Header Styles */
-        .header {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 18px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .logo-section h2 { margin: 0; font-size: 18px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .balance-badge { background: rgba(99, 102, 241, 0.2); padding: 8px 15px; border-radius: 30px; border: 1px solid var(--primary); font-weight: bold; font-size: 14px; }
-
-        /* Form Card */
-        .main-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        label { display: block; margin-bottom: 8px; font-size: 13px; color: #94a3b8; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Custom Dropdowns */
-        select, input {
-            width: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1.5px solid rgba(255,255,255,0.1);
-            padding: 14px;
-            border-radius: 14px;
-            color: white;
-            font-size: 15px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: 0.3s;
-            box-sizing: border-box;
-        }
-
-        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
-
-        /* Info Box */
-        .info-panel {
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px dashed rgba(99, 102, 241, 0.3);
-        }
-
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
-        .info-item { display: flex; align-items: center; gap: 8px; color: #cbd5e1; }
-        .info-item i { color: var(--primary); }
-
-        /* Total Section */
-        .total-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255,255,255,0.03);
-            padding: 15px;
-            border-radius: 14px;
-            margin-bottom: 20px;
-        }
-
-        .total-price { font-size: 22px; font-weight: 800; color: #fff; }
-
-        /* Button */
-        .place-order-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .place-order-btn:active { transform: scale(0.97); }
+        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
+        
+        .header { background: linear-gradient(135deg, #4338ca, #6366f1); padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .balance-box { background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 1.1em; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #94a3b8; }
+        
+        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: var(--card); color: white; font-size: 1em; box-sizing: border-box; }
+        
+        .info-card { background: rgba(99, 102, 241, 0.1); border: 1px dashed var(--primary); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.85em; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .order-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: 0.3s; }
+        .order-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="logo-section">
-            <h2>🚀 Social Booster Hub</h2>
-            <small style="color: #94a3b8;">Futuristic SMM Solutions</small>
+        <div>
+            <div style="font-weight: bold; font-size: 1.2em;">🚀 Social Booster Hub</div>
+            <div style="font-size: 0.8em; opacity: 0.8;">Futuristic SMM Solutions</div>
         </div>
-        <div class="balance-badge">
-            <i class="fas fa-wallet"></i> <span id="balance-val">₹0.00</span>
-        </div>
+        <div class="balance-box" id="user-balance">₹0.00</div>
     </div>
 
-    <div class="main-card">
-        <label><i class="fas fa-folder"></i> Select Category</label>
-        <select id="category" onchange="loadServices()">
-            <option value="ig_followers">📁 Instagram Followers [Guaranteed]</option>
-            <option value="ig_likes">📁 Instagram Likes [Indian]</option>
-            <option value="tg_members">📁 Telegram Members [Targeted]</option>
-            <option value="yt_views">📁 YouTube Views [Non Drop]</option>
-            <option value="fb_services">📁 Facebook Page Services</option>
-            <option value="wa_services">📁 WhatsApp Channel Services</option>
+    <div class="form-group">
+        <label><i class="fa-solid fa-folder"></i> SELECT CATEGORY</label>
+        <select id="category" onchange="updateServices()">
+            <option value="">-- Choose Category --</option>
+            <option value="ig_follower">📁 Instagram Followers [Guaranteed]</option>
+            <option value="ig_like">📁 Instagram Likes [Indian]</option>
+            <option value="yt_view">📁 Real Ads YouTube Views 🔥</option>
+            <option value="tg_member">📁 Telegram Members [Targeted]</option>
+            <option value="fb_page">📁 Facebook Page Likes+Followers</option>
+            <option value="wa_follower">📁 Whatsapp Channel Followers</option>
         </select>
-
-        <label><i class="fas fa-list-ul"></i> Choose Service</label>
-        <select id="service" onchange="updateInfo()">
-            </select>
-
-        <div class="info-panel">
-            <div class="info-grid" id="service-info">
-                <div class="info-item"><i class="fas fa-clock"></i> <span>Start: 0-1h</span></div>
-                <div class="info-item"><i class="fas fa-bolt"></i> <span>Speed: 50K/Day</span></div>
-                <div class="info-item"><i class="fas fa-globe"></i> <span>Quality: High</span></div>
-                <div class="info-item"><i class="fas fa-sync"></i> <span>Refill: 30 Days</span></div>
-            </div>
-            <div style="font-size: 11px; margin-top: 10px; color: #94a3b8;">* Min: 20 | Max: 1,000,000</div>
-        </div>
-
-        <label><i class="fas fa-link"></i> Target Link</label>
-        <input type="text" id="target-link" placeholder="https://instagram.com/p/..." autocomplete="off">
-
-        <label><i class="fas fa-sort-amount-up"></i> Quantity</label>
-        <input type="number" id="qty" placeholder="Min: 100" oninput="calcTotal()">
-
-        <div class="total-container">
-            <span style="color: #94a3b8;">Grand Total:</span>
-            <span class="total-price" id="total-val">₹0.00</span>
-        </div>
-
-        <button class="place-order-btn" onclick="sendOrder()">
-            <i class="fas fa-shopping-cart"></i> PLACE ORDER NOW
-        </button>
     </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-list"></i> CHOOSE SERVICE</label>
+        <select id="service"></select>
+    </div>
+
+    <div class="info-card">
+        <div><i class="fa-regular fa-clock"></i> Start: 0-1h</div>
+        <div><i class="fa-solid fa-bolt"></i> Speed: 50K/Day</div>
+        <div><i class="fa-solid fa-earth-americas"></i> Quality: High</div>
+        <div><i class="fa-solid fa-arrows-rotate"></i> Refill: 30 Days</div>
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-link"></i> TARGET LINK</label>
+        <input type="text" id="link" placeholder="https://instagram.com/p/...">
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-arrow-up-9-1"></i> QUANTITY</label>
+        <input type="number" id="qty" placeholder="Min: 100" oninput="calculateTotal()">
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2em;">
+        <span>Grand Total:</span>
+        <span id="total-price">₹0.00</span>
+    </div>
+
+    <button class="order-btn" onclick="placeOrder()">Place Order</button>
 
     <script>
-        let tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.headerColor = '#0f172a';
 
-        const serviceData = {
-            ig_followers: [
-                {id: 1, name: "Instagram Followers [R30] - ₹25", price: 25},
-                {id: 2, name: "Instagram Followers [Indian 🇮🇳] - ₹60", price: 60},
-                {id: 3, name: "Instagram Followers [Real Ads] - ₹150", price: 150}
-            ],
-            ig_likes: [
-                {id: 4, name: "Instagram Likes [Super Fast] - ₹5", price: 5},
-                {id: 5, name: "Instagram Likes [Indian 🇮🇳] - ₹12", price: 12}
-            ],
-            tg_members: [
-                {id: 6, name: "Telegram Members [Non Drop] - ₹90", price: 90},
-                {id: 7, name: "Telegram Online Members - ₹140", price: 140}
-            ],
-            yt_views: [
-                {id: 8, name: "YouTube Views [Suggested] - ₹110", price: 110}
-            ],
-            fb_services: [
-                {id: 9, name: "Facebook Page Likes + Follows - ₹180", price: 180}
-            ],
-            wa_services: [
-                {id: 10, name: "WhatsApp Channel Followers - ₹250", price: 250}
-            ]
+        // 1. Balance Fetching Logic
+        const urlParams = new URLSearchParams(window.location.search);
+        const bal = urlParams.get('balance') || "0.00";
+        document.getElementById('user-balance').innerText = "₹" + bal;
+
+        const servicesData = {
+            "ig_follower": [{ id: 101, name: "IG Guaranteed - ₹80/k", price: 0.08 }],
+            "ig_like": [{ id: 201, name: "IG Indian Likes - ₹40/k", price: 0.04 }],
+            "yt_view": [{ id: 301, name: "YT High Retention - ₹150/k", price: 0.15 }],
+            "tg_member": [{ id: 401, name: "TG Real Members - ₹120/k", price: 0.12 }],
+            "fb_page": [{ id: 501, name: "FB Premium Likes - ₹90/k", price: 0.09 }],
+            "wa_follower": [{ id: 601, name: "WA Channel Followers - ₹200/k", price: 0.20 }]
         };
 
-        function loadServices() {
+        function updateServices() {
             const cat = document.getElementById('category').value;
-            const sSelect = document.getElementById('service');
-            sSelect.innerHTML = serviceData[cat].map(s => <option value="${s.id}" data-price="${s.price}">${s.name}</option>).join('');
-            calcTotal();
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.innerHTML = "";
+            if(servicesData[cat]) {
+                servicesData[cat].forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s.id;
+                    opt.dataset.price = s.price;
+                    opt.innerText = s.name;
+                    serviceSelect.appendChild(opt);
+                });
+            }
+            calculateTotal();
         }
 
-        function calcTotal() {
+        function calculateTotal() {
             const qty = document.getElementById('qty').value || 0;
-            const price = document.getElementById('service').selectedOptions[0].getAttribute('data-price');
-            const total = (qty / 1000) * price;
-            document.getElementById('total-val').innerText = "₹" + total.toFixed(2);
+            const service = document.getElementById('service').selectedOptions[0];
+            const price = service ? service.dataset.price : 0;
+            document.getElementById('total-price').innerText = "₹" + (qty * price).toFixed(2);
         }
 
-        function sendOrder() {
-            const link = document.getElementById('target-link').value;
-            const qty = document.getElementById('qty').value;
-            const service = document.getElementById('service').selectedOptions[0].text;
-            const total = document.getElementById('total-val').innerText;
-
-            if(!link || qty < 10) {
-                tg.showAlert("❌ Please provide valid link and quantity!");
+        function placeOrder() {
+            const data = {
+                service: document.getElementById('service').selectedOptions[0].text,
+                service_id: document.getElementById('service').value,
+                link: document.getElementById('link').value,
+                qty: document.getElementById('qty').value,
+                cost: document.getElementById('total-price').innerText
+            };
+            
+            if(!data.link || !data.qty) {
+                alert("Please fill all details!");
                 return;
             }
-
-            const data = {
-                order_type: "SMM_ORDER",
-                service: service,
-                link: link,
-                qty: qty,
-                cost: total
-            };
-
-            tg.sendData(JSON.stringify(data));
+            
+            tg.sendData(JSON.stringify(data)); // Bot ko data bhejna
         }
-
-        window.onload = loadServices;
     </script>
 </body>
 </html>
