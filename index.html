@@ -1,138 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Booster Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
-        
-        .header { background: linear-gradient(135deg, #4338ca, #6366f1); padding: 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .balance-box { background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 1.1em; }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #94a3b8; }
-        
-        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: var(--card); color: white; font-size: 1em; box-sizing: border-box; }
-        
-        .info-card { background: rgba(99, 102, 241, 0.1); border: 1px dashed var(--primary); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.85em; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        .order-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: var(--primary); color: white; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: 0.3s; }
-        .order-btn:active { transform: scale(0.98); }
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 15px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 15px; }
+        .bal-box { background: #4338ca; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 1.2em; }
+        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #334155; color: white; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; background: #6366f1; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <div>
-            <div style="font-weight: bold; font-size: 1.2em;">🚀 Social Booster Hub</div>
-            <div style="font-size: 0.8em; opacity: 0.8;">Futuristic SMM Solutions</div>
-        </div>
-        <div class="balance-box" id="user-balance">₹0.00</div>
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-folder"></i> SELECT CATEGORY</label>
-        <select id="category" onchange="updateServices()">
-            <option value="">-- Choose Category --</option>
-            <option value="ig_follower">📁 Instagram Followers [Guaranteed]</option>
-            <option value="ig_like">📁 Instagram Likes [Indian]</option>
-            <option value="yt_view">📁 Real Ads YouTube Views 🔥</option>
-            <option value="tg_member">📁 Telegram Members [Targeted]</option>
-            <option value="fb_page">📁 Facebook Page Likes+Followers</option>
-            <option value="wa_follower">📁 Whatsapp Channel Followers</option>
+    <div class="bal-box" id="user-bal">₹0.00</div>
+    <div class="card">
+        <label>Category</label>
+        <select id="cat" onchange="updateSvc()">
+            <option value="ig">Instagram Followers</option>
+            <option value="tg">Telegram Members</option>
         </select>
+        
+        <label>Service</label>
+        <select id="svc" onchange="calc()"></select>
+        
+        <input type="text" id="link" placeholder="Paste Link Here">
+        <input type="number" id="qty" placeholder="Quantity" oninput="calc()">
+        
+        <div style="text-align: right; font-weight: bold; margin: 10px 0;" id="total">Total: ₹0.00</div>
+        <button class="btn" onclick="order()">PLACE ORDER</button>
     </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-list"></i> CHOOSE SERVICE</label>
-        <select id="service"></select>
-    </div>
-
-    <div class="info-card">
-        <div><i class="fa-regular fa-clock"></i> Start: 0-1h</div>
-        <div><i class="fa-solid fa-bolt"></i> Speed: 50K/Day</div>
-        <div><i class="fa-solid fa-earth-americas"></i> Quality: High</div>
-        <div><i class="fa-solid fa-arrows-rotate"></i> Refill: 30 Days</div>
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-link"></i> TARGET LINK</label>
-        <input type="text" id="link" placeholder="https://instagram.com/p/...">
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-arrow-up-9-1"></i> QUANTITY</label>
-        <input type="number" id="qty" placeholder="Min: 100" oninput="calculateTotal()">
-    </div>
-
-    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2em;">
-        <span>Grand Total:</span>
-        <span id="total-price">₹0.00</span>
-    </div>
-
-    <button class="order-btn" onclick="placeOrder()">Place Order</button>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('user-bal').innerText = "₹" + (params.get('balance') || "0.00");
 
-        // 1. Balance Fetching Logic
-        const urlParams = new URLSearchParams(window.location.search);
-        const bal = urlParams.get('balance') || "0.00";
-        document.getElementById('user-balance').innerText = "₹" + bal;
-
-        const servicesData = {
-            "ig_follower": [{ id: 101, name: "IG Guaranteed - ₹80/k", price: 0.08 }],
-            "ig_like": [{ id: 201, name: "IG Indian Likes - ₹40/k", price: 0.04 }],
-            "yt_view": [{ id: 301, name: "YT High Retention - ₹150/k", price: 0.15 }],
-            "tg_member": [{ id: 401, name: "TG Real Members - ₹120/k", price: 0.12 }],
-            "fb_page": [{ id: 501, name: "FB Premium Likes - ₹90/k", price: 0.09 }],
-            "wa_follower": [{ id: 601, name: "WA Channel Followers - ₹200/k", price: 0.20 }]
+        // Yaha apni Service ID aur per 1 unit price daalo
+        const data = {
+            "ig": [{id: 101, name: "IG Guaranteed - ₹80/k", p: 0.08}],
+            "tg": [{id: 401, name: "TG Real Members - ₹120/k", p: 0.12}]
         };
 
-        function updateServices() {
-            const cat = document.getElementById('category').value;
-            const serviceSelect = document.getElementById('service');
-            serviceSelect.innerHTML = "";
-            if(servicesData[cat]) {
-                servicesData[cat].forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.dataset.price = s.price;
-                    opt.innerText = s.name;
-                    serviceSelect.appendChild(opt);
-                });
-            }
-            calculateTotal();
+        function updateSvc() {
+            const s = document.getElementById('svc'); s.innerHTML = "";
+            data[document.getElementById('cat').value].forEach(x => {
+                let o = document.createElement('option'); o.value = x.id; o.dataset.p = x.p; o.innerText = x.name; s.appendChild(o);
+            });
+            calc();
         }
 
-        function calculateTotal() {
-            const qty = document.getElementById('qty').value || 0;
-            const service = document.getElementById('service').selectedOptions[0];
-            const price = service ? service.dataset.price : 0;
-            document.getElementById('total-price').innerText = "₹" + (qty * price).toFixed(2);
+        function calc() {
+            const q = document.getElementById('qty').value || 0;
+            const p = document.getElementById('svc').selectedOptions[0]?.dataset.p || 0;
+            document.getElementById('total').innerText = "Total: ₹" + (q * p).toFixed(2);
         }
 
-        function placeOrder() {
-            const data = {
-                service: document.getElementById('service').selectedOptions[0].text,
-                service_id: document.getElementById('service').value,
+        function order() {
+            const res = {
+                service_id: document.getElementById('svc').value,
                 link: document.getElementById('link').value,
                 qty: document.getElementById('qty').value,
-                cost: document.getElementById('total-price').innerText
+                cost: document.getElementById('total').innerText.replace('Total: ', '')
             };
-            
-            if(!data.link || !data.qty) {
-                alert("Please fill all details!");
-                return;
-            }
-            
-            tg.sendData(JSON.stringify(data)); // Bot ko data bhejna
+            if(!res.link || !res.qty) return alert("Fill all details!");
+            tg.sendData(JSON.stringify(res)); // Bot ko data send karega
         }
+        updateSvc();
     </script>
 </body>
 </html>
