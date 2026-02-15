@@ -1,71 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Booster Web</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; padding: 15px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 15px; }
-        .bal-box { background: #4338ca; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 1.2em; }
-        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #334155; color: white; box-sizing: border-box; }
-        .btn { width: 100%; padding: 15px; background: #6366f1; border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; padding: 15px; margin: 0; }
+        .bal-card { background: linear-gradient(135deg, #4338ca, #6366f1); padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .form-box { background: #1e293b; padding: 20px; border-radius: 15px; }
+        label { font-size: 0.8em; color: #94a3b8; display: block; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        .total-box { display: flex; justify-content: space-between; font-weight: bold; margin: 15px 0; font-size: 1.1em; color: #6366f1; }
+        .btn-order { width: 100%; padding: 15px; background: #6366f1; border: none; border-radius: 10px; color: white; font-weight: bold; font-size: 1em; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="bal-box" id="user-bal">₹0.00</div>
-    <div class="card">
-        <label>Category</label>
-        <select id="cat" onchange="updateSvc()">
+
+    <div class="bal-card" id="display-bal">Balance: ₹0.00</div>
+
+    <div class="form-box">
+        <label>Select Category</label>
+        <select id="category" onchange="updateSvc()">
             <option value="ig">Instagram Followers</option>
+            <option value="yt">YouTube Views</option>
             <option value="tg">Telegram Members</option>
         </select>
-        
-        <label>Service</label>
-        <select id="svc" onchange="calc()"></select>
-        
-        <input type="text" id="link" placeholder="Paste Link Here">
-        <input type="number" id="qty" placeholder="Quantity" oninput="calc()">
-        
-        <div style="text-align: right; font-weight: bold; margin: 10px 0;" id="total">Total: ₹0.00</div>
-        <button class="btn" onclick="order()">PLACE ORDER</button>
+
+        <label>Select Service</label>
+        <select id="service" onchange="calcTotal()"></select>
+
+        <label>Target Link</label>
+        <input type="text" id="link" placeholder="Paste link here...">
+
+        <label>Quantity</label>
+        <input type="number" id="qty" placeholder="Min: 100" oninput="calcTotal()">
+
+        <div class="total-box">
+            <span>Total Price:</span>
+            <span id="total-price">₹0.00</span>
+        </div>
+
+        <button class="btn-order" onclick="placeOrder()">PLACE ORDER NOW</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        const params = new URLSearchParams(window.location.search);
-        document.getElementById('user-bal').innerText = "₹" + (params.get('balance') || "0.00");
+        tg.expand();
 
-        // Yaha apni Service ID aur per 1 unit price daalo
-        const data = {
-            "ig": [{id: 101, name: "IG Guaranteed - ₹80/k", p: 0.08}],
-            "tg": [{id: 401, name: "TG Real Members - ₹120/k", p: 0.12}]
+        // Fetch Balance from URL
+        const params = new URLSearchParams(window.location.search);
+        const currentBal = params.get('balance') || "0.00";
+        document.getElementById('display-bal').innerText = "Wallet Balance: ₹" + currentBal;
+
+        // Service Data (Add your Panel's Service IDs here)
+        const services = {
+            "ig": [{id: 4212, name: "IG Guaranteed Followers - ₹65/k", price: 0.065}],
+            "yt": [{id: 2341, name: "YT Real Views - ₹120/k", price: 0.12}],
+            "tg": [{id: 1102, name: "TG Fast Members - ₹90/k", price: 0.09}]
         };
 
         function updateSvc() {
-            const s = document.getElementById('svc'); s.innerHTML = "";
-            data[document.getElementById('cat').value].forEach(x => {
-                let o = document.createElement('option'); o.value = x.id; o.dataset.p = x.p; o.innerText = x.name; s.appendChild(o);
+            const cat = document.getElementById('category').value;
+            const svcSelect = document.getElementById('service');
+            svcSelect.innerHTML = "";
+            services[cat].forEach(s => {
+                let opt = document.createElement('option');
+                opt.value = s.id;
+                opt.dataset.price = s.price;
+                opt.innerText = s.name;
+                svcSelect.appendChild(opt);
             });
-            calc();
+            calcTotal();
         }
 
-        function calc() {
-            const q = document.getElementById('qty').value || 0;
-            const p = document.getElementById('svc').selectedOptions[0]?.dataset.p || 0;
-            document.getElementById('total').innerText = "Total: ₹" + (q * p).toFixed(2);
+        function calcTotal() {
+            const qty = document.getElementById('qty').value || 0;
+            const price = document.getElementById('service').selectedOptions[0]?.dataset.price || 0;
+            document.getElementById('total-price').innerText = "₹" + (qty * price).toFixed(2);
         }
 
-        function order() {
-            const res = {
-                service_id: document.getElementById('svc').value,
+        function placeOrder() {
+            const orderData = {
+                service_id: document.getElementById('service').value,
                 link: document.getElementById('link').value,
                 qty: document.getElementById('qty').value,
-                cost: document.getElementById('total').innerText.replace('Total: ', '')
+                cost: document.getElementById('total-price').innerText
             };
-            if(!res.link || !res.qty) return alert("Fill all details!");
-            tg.sendData(JSON.stringify(res)); // Bot ko data send karega
+
+            if(!orderData.link || orderData.qty < 10) {
+                alert("Please enter valid link and quantity!");
+                return;
+            }
+
+            tg.sendData(JSON.stringify(orderData));
         }
+
+        // Initialize first time
         updateSvc();
     </script>
 </body>
